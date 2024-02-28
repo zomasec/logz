@@ -8,7 +8,7 @@ logz is a simple logging package in Go with different log levels, developed by H
 ## Installation
 
 ```bash
-go get github.com/zomasec/logz
+go get -u github.com/zomasec/logz
 ```
 
 ## Usage
