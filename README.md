@@ -1,5 +1,5 @@
 # logz
-[![Go Reference](https://pkg.go.dev/badge/github.com/zomasec/logz.svg)](https://pkg.go.dev/github.com/zomasec/logz) [![Go Report Card]
+[![Go Reference](https://pkg.go.dev/badge/github.com/zomasec/logz.svg)](https://pkg.go.dev/github.com/zomasec/logz) 
 [![Go Report Card](https://goreportcard.com/badge/github.com/zomasec/logz)](https://goreportcard.com/report/github.com/zomasec/logz)
 [![License](https://img.shields.io/github/license/zomasec/logz)](https://github.com/zomasec/logz/blob/main/LICENSE)
 
