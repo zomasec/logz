@@ -32,7 +32,7 @@ func main() {
     logger.ERROR("This is an error message")
     logger.FATAL("This is a fatal message")
 }
-
+```
 ## Custom Logging
 
 ```go
@@ -49,3 +49,4 @@ func main() {
     // Log the custom message
     customLogger.Log()
 }
+```
