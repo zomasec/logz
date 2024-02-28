@@ -3,7 +3,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/zomasec/logz)](https://goreportcard.com/report/github.com/zomasec/logz)
 [![License](https://img.shields.io/github/license/zomasec/logz)](https://github.com/zomasec/logz/blob/main/LICENSE)
 
-logz is a simple logging package in Go with different log levels.
+logz is a simple logging package in Go with different log levels, developed by Hazem El-Sayed
 
 ## Installation
 
