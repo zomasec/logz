@@ -1,102 +1,130 @@
-// Package logz provides a simple logging functionality with different log levels.
 package logz
 
 import (
 	"fmt"
 )
 
-// StandardLogger defines the interface for a standard logger.
-type StandardLogger interface {
-	Log(level string, message string, args ...interface{})
-	Info(message string, args ...interface{})
-	Debug(message string, args ...interface{})
-	Warning(message string, args ...interface{})
-	Error(message string, args ...interface{})
-	Fatal(message string, args ...interface{})
-}
 
-// Logger represents a logger object which holds a formatter and default logger instance.
-type Logger struct {
-	Formatter *Formatter
-	Default   *DefaultLogger
-}
+const (
+	Red     = "\033[0;31m"
+	Blue    = "\033[0;34m"
+	Green   = "\033[0;32m"
+	Yellow  = "\033[0;33m"
+	Purple  = "\033[0;35m"
+	NC      = "\033[0m"    // No Color
+)
 
-// DefaultLogger represents the default logger configuration.
-type DefaultLogger struct {
-	Level     string
-	Message   string
-	Args      []interface{}
-	Formatter *Formatter
-}
-
-// Formatter represents the log message formatter.
+// Formatter represents the log message formatter including the color.
 type Formatter struct {
-	LogHolder string
-	Message   string
-	Args      []interface{}
+	LogHolder   string
+	Message     string
+	Args        []interface{}
+	Color       string // Added to hold the color for the holder
 }
 
-// NewLogger creates a new Logger instance with the provided log holder, message, and optional arguments.
-func NewLogger(holder string, msg string, args ...interface{}) *Formatter {
-	format := &Formatter{
+// DefaultLogger now includes a map for custom log level colors.
+type DefaultLogger struct {
+	Level          string
+	Message        string
+	Args           []interface{}
+	Formatter      *Formatter
+	ColorEnabled   bool // Controls color output
+	DebugEnabled   bool // Controls debug log visibility
+	InfoEnabled    bool // Controls info log visibility
+	WarningEnabled bool // Controls warning log visibility
+	ErrorEnabled   bool // Controls error log visibility
+	FatalEnabled   bool // Controls fatal log visibility
+}
+
+// NewLogger creates a new Logger instance with the provided log holder, message, color, and optional arguments.
+func NewLogger(holder, color, msg string, args ...interface{}) *Formatter {
+	return &Formatter{
 		LogHolder: holder,
+		Color:     color,
 		Message:   msg,
 		Args:      args,
 	}
-	return format
 }
 
 // DefaultLogs returns a new DefaultLogger instance with default configuration.
 func DefaultLogs() *DefaultLogger {
-	return &DefaultLogger{Formatter: &Formatter{}}
+	return &DefaultLogger{
+		Formatter:     &Formatter{},
+		ColorEnabled:  true, // Colors are enabled by default
+		DebugEnabled:  true, // All log levels are visible by default
+		InfoEnabled:   true,
+		WarningEnabled: true,
+		ErrorEnabled:  true,
+		FatalEnabled:  true,
+	}
 }
 
-// Format formats the log message with the provided level, message, and optional arguments.
-func (f Formatter) Format(level string, msg string, args ...interface{}) string {
-	return fmt.Sprintf("[%v] %s", level, fmt.Sprintf(msg, args...))
+func (f Formatter) Format() string {
+	color := f.Color
+	if color == "" {
+		color = NC // Default to no color if none is specified
+	}
+	return fmt.Sprintf("[%s%s%s] %s", color, f.LogHolder,NC, fmt.Sprintf(f.Message, f.Args...))
 }
 
 // Log prints the formatted log message.
 func (f *Formatter) Log() {
-	formatted := f.Format(f.LogHolder, f.Message, f.Args...)
-	fmt.Println(formatted)
+	fmt.Println(f.Format())
 }
 
-// INFO logs a message at INFO level.
+func (l *DefaultLogger) colorize(holder, color string) {
+	if l.ColorEnabled {
+		l.Formatter.LogHolder = fmt.Sprintf("%s%s%s", color, holder, NC)
+	} else {
+		l.Formatter.LogHolder = holder
+	}
+}
+
 func (l *DefaultLogger) INFO(msg string, args ...interface{}) {
-	l.Formatter.LogHolder = "INFO"
+	if !l.InfoEnabled {
+		return
+	}
+	l.colorize("INFO", Green)
 	l.Formatter.Message = msg
 	l.Formatter.Args = args
 	l.Formatter.Log()
 }
 
-// DEBUG logs a message at DEBUG level.
 func (l *DefaultLogger) DEBUG(msg string, args ...interface{}) {
-	l.Formatter.LogHolder = "DEBUG"
+	if !l.DebugEnabled {
+		return
+	}
+	l.colorize("DEBUG", Blue)
 	l.Formatter.Message = msg
 	l.Formatter.Args = args
 	l.Formatter.Log()
 }
 
-// WARNING logs a message at WARNING level.
 func (l *DefaultLogger) WARNING(msg string, args ...interface{}) {
-	l.Formatter.LogHolder = "WARNING"
+	if !l.WarningEnabled {
+		return
+	}
+	l.colorize("WARNING", Yellow)
 	l.Formatter.Message = msg
 	l.Formatter.Args = args
 	l.Formatter.Log()
 }
 
-// ERROR logs a message at ERROR level.
 func (l *DefaultLogger) ERROR(msg string, args ...interface{}) {
-	l.Formatter.LogHolder = "ERROR"
+	if !l.ErrorEnabled {
+		return
+	}
+	l.colorize("ERROR", Red)
 	l.Formatter.Message = msg
 	l.Formatter.Args = args
 	l.Formatter.Log()
 }
 
-// FATAL logs a message at FATAL level.
 func (l *DefaultLogger) FATAL(msg string, args ...interface{}) {
-	l.Formatter.LogHolder = "FATAL"
+	if !l.FatalEnabled {
+		return
+	}
+	l.colorize("FATAL", Purple)
 	l.Formatter.Message = msg
 	l.Formatter.Args = args
 	l.Formatter.Log()
