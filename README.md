@@ -1,4 +1,4 @@
-# logz v1.0.0
+# logz v1.0.1
 [![Go Reference](https://pkg.go.dev/badge/github.com/zomasec/logz.svg)](https://pkg.go.dev/github.com/zomasec/logz) 
 [![Go Report Card](https://goreportcard.com/badge/github.com/zomasec/logz)](https://goreportcard.com/report/github.com/zomasec/logz)
 [![License](https://img.shields.io/github/license/zomasec/logz)](https://github.com/zomasec/logz/blob/main/LICENSE)
@@ -51,7 +51,47 @@ func main() {
 }
 ```
 
+## Customizing Logger Colors
 
+- To customize the colors for different log levels:
+
+```go
+
+package main
+
+import (
+    "github.com/zomasec/logz"
+)
+
+func main() {
+    // Creating a custom logger with a specified color
+    customLogger := logz.NewLogger("DEBUG", logz.Blue, "Debugging mode activated.")
+    customLogger.Log()
+}
+```
+
+## Enabling/Disabling Log Types
+
+- Dynamically enable or disable specific types of logs:
+
+```go
+
+package main
+
+import (
+    "github.com/zomasec/logz"
+)
+
+func main() {
+    logger := logz.DefaultLogs()
+
+    // Disable DEBUG logs
+    logger.DebugEnabled = false
+
+    // This debug message will not be printed
+    logger.DEBUG("This debug message will not be shown.")
+}
+```
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
