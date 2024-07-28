@@ -9,6 +9,7 @@ func main() {
 	path := "docs/example.go"
 
 	logger.Msg().Warn(path)
+	
 
 }
 

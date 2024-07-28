@@ -1,6 +1,9 @@
 package logger
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 // Logger interface defines the methods that any logger implementation should have.
 type Logger interface {
@@ -22,19 +25,25 @@ type LoggerOptions struct {
 	FatalEnabled   bool // Controls fatal log visibility
 }
 
+var (
+	once     sync.Once
+	instance *LoggerOptions
+)
 
-
-// Msg returns a new instance of the default loggers [ Info Debug Test Warn ... ]. 
+// GetLogger returns the singleton instance of LoggerOptions.
 func Msg() Logger {
-	return &LoggerOptions{
-		Formatter:      Formatter{},
-		ColorEnabled:   true, // Colors are enabled by default
-		DebugEnabled:   true, // All log levels are visible by default
-		InfoEnabled:    true,
-		WarningEnabled: true,
-		ErrorEnabled:   true,
-		FatalEnabled:   true,
-	}
+	once.Do(func() {
+		instance = &LoggerOptions{
+			Formatter:      Formatter{},
+			ColorEnabled:   true, // Colors are enabled by default
+			DebugEnabled:   true, // All log levels are visible by default
+			InfoEnabled:    true,
+			WarningEnabled: true,
+			ErrorEnabled:   true,
+			FatalEnabled:   true,
+		}
+	})
+	return instance
 }
 
 func (l *LoggerOptions) colorize(holder, color string) {
@@ -59,7 +68,7 @@ func (l *LoggerOptions) Debug(msg string, args ...interface{}) {
 		return
 	}
 
-	l.colorize(Debug.String(), Colors[Purple] )
+	l.colorize(Debug.String(), Colors[Purple])
 	l.Formatter.SetMessage(msg, args...)
 	l.Formatter.Log()
 }
@@ -68,7 +77,7 @@ func (l *LoggerOptions) Warn(msg string, args ...interface{}) {
 	if !l.WarningEnabled {
 		return
 	}
-	l.colorize(Warn.String(), Colors[Yellow] )
+	l.colorize(Warn.String(), Colors[Yellow])
 	l.Formatter.SetMessage(msg, args...)
 	l.Formatter.Log()
 }
@@ -77,7 +86,7 @@ func (l *LoggerOptions) Error(msg string, args ...interface{}) {
 	if !l.ErrorEnabled {
 		return
 	}
-	l.colorize(Error.String(), Colors[Red] )
+	l.colorize(Error.String(), Colors[Red])
 	l.Formatter.SetMessage(msg, args...)
 	l.Formatter.Log()
 }
@@ -86,8 +95,7 @@ func (l *LoggerOptions) Fatal(msg string, args ...interface{}) {
 	if !l.FatalEnabled {
 		return
 	}
-	l.colorize(Fatal.String(), Colors[Orange] )
+	l.colorize(Fatal.String(), Colors[Orange])
 	l.Formatter.SetMessage(msg, args...)
 	l.Formatter.Log()
 }
-
